@@ -115,7 +115,7 @@ function init() {
     // --
 
     // Create output_folder/mapName if it does not exist.
-    if (!fs.existsSync(`${getSetting("default_outputFolder")}/${MapName}/`, {  recursive: true	})) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`)
+    if (!fs.existsSync(`${getSetting("default_outputFolder")}/${MapName}/`)) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, {  recursive: true  })
 
     // -- SONGDESC
     // Create song description file, used for keeping song title, artist, coachCount and such.
