@@ -1,0 +1,37 @@
+{
+  "name": "json2tape",
+  "version": "1.0.0",
+  "description": "Convert JDN JSON format to UbiArt Tape Format.",
+  "main": "j2t.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heyimyunyl/json2tape.git"
+  },
+  "keywords": [
+    "justdance",
+    "ubisoft",
+    "just",
+    "dance",
+    "tape",
+    "dtape",
+    "ktape",
+    "json2dtape",
+    "j2d"
+  ],
+  "author": "yunyl",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/heyimyunyl/json2tape/issues"
+  },
+  "homepage": "https://github.com/heyimyunyl/json2tape#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "child_process": "^1.0.2",
+    "everpolate": "0.0.3",
+    "fs": "0.0.1-security",
+    "hex-rgb": "^4.3.0"
+  }
+}
