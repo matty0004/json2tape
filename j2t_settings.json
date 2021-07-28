@@ -1,0 +1,22 @@
+{
+	"dtape": {
+		"dtape_shuffle": true,
+		"dtape_mapsFolderType": "maps",
+		"dtape_motionFormat": "msm",
+		"dtape_pictoFormat": "png",
+		"dtape_useMontagePath": false
+	},
+	"ktape": {
+		"ktape_shuffle": true
+	},
+	"musictrack": {
+		"musictrack_audioFormat" : "wav"
+	},
+	"default": {
+		"default_minifyJSONs": false,
+		"default_outputFolder": "./output",
+		"default_JDVersion": 2017,
+		"default_OriginalJDVersion": 2017,
+		"default_Credits": "All rights of the producer and other rightholders to the recorded work reserved. Unless otherwise authorized, the duplication, rental, loan, exchange or use of this video game for public performance, broadcasting and online distribution to the public are prohibited."
+	}
+}
