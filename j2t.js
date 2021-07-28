@@ -46,7 +46,7 @@ function init() {
         // Song data
         
             let MapName = mainJson.MapName,
-                CoachCount = BasicFunc.getRealNumCoach(mainJson.NumCoach) || 1,
+                CoachCount = mainJson.NumCoach ? BasicFunc.getRealNumCoach(mainJson.NumCoach) : 1,
                 Artist = mainJson.Artist || "Placeholder Artist",
                 Title = mainJson.Title || "Placeholder Title",
                 AudioPreview = mainJson.AudioPreview || {}
