@@ -82,12 +82,111 @@ exports.getRealDefaultColors = function(DefaultColors,lyricsColor) {
         return
     }
     return {
-        "songcolor_1a": hexToUbi(DefaultColors["songColor_1A"]) || [1,1,1,1], // Main 1A color, usually lighter.
-        "songcolor_1b": hexToUbi(DefaultColors["songColor_1B"]) || [1,1,1,1], // Main 2B color, usually darker.
-        "songcolor_2a": hexToUbi(DefaultColors["songColor_2A"]) || [1,1,1,1], // Banner 1A color, usually lighter.
-        "songcolor_2b": hexToUbi(DefaultColors["songColor_2B"]) || [1,1,1,1], // Banner 2B color, usually darker.
-        "lyrics": hexToUbi(lyricsColor) || [1,1,1,1], // Lyrics color
+        "songcolor_1a": DefaultColors["songColor_1A"] ? hexToUbi(DefaultColors["songColor_1A"]) : [1,1,1,1], // Main 1A color, usually lighter.
+        "songcolor_1b": DefaultColors["songColor_1b"] ? hexToUbi(DefaultColors["songColor_1B"]) : [1,1,1,1], // Main 2B color, usually darker.
+        "songcolor_2a": DefaultColors["songColor_2a"] ? hexToUbi(DefaultColors["songColor_2A"]) : [1,1,1,1], // Banner 1A color, usually lighter.
+        "songcolor_2b": DefaultColors["songColor_2b"] ? hexToUbi(DefaultColors["songColor_2B"]) : [1,1,1,1], // Banner 2B color, usually darker.
+        "lyrics": lyricsColor ? hexToUbi(lyricsColor) : [1,1,1,1], // Lyrics color
         "theme": [1, 1, 1, 1] // #FFFFFF as default.
+    }
+}
+
+exports.musictrackExtras = function() {
+    return {
+    signatures: [{
+            __class: "MusicSignature",
+            marker: 1,
+            beats: 3
+        }, {
+            __class: "MusicSignature",
+            marker: 4,
+            beats: 4
+        }, {
+            __class: "MusicSignature",
+            marker: 194,
+            beats: 3
+        }, {
+            __class: "MusicSignature",
+            marker: 197,
+            beats: 4
+        }
+    ],
+    sections: [{
+        __class: "MusicSection",
+        marker: 1,
+        sectionType: 6,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 19,
+        sectionType: 1,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 52,
+        sectionType: 7,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 68,
+        sectionType: 3,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 84,
+        sectionType: 7,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 100,
+        sectionType: 1,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 132,
+        sectionType: 7,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 148,
+        sectionType: 3,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 164,
+        sectionType: 7,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 190,
+        sectionType: 3,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 196,
+        sectionType: 2,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 194,
+        sectionType: 6,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 259,
+        sectionType: 3,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 195,
+        sectionType: 7,
+        comment: ""
+    }, {
+        __class: "MusicSection",
+        marker: 291,
+        sectionType: 7,
+        comment: ""
+    }] 
     }
 }
 
