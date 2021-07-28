@@ -49,6 +49,7 @@ function init() {
                 CoachCount = mainJson.NumCoach ? BasicFunc.getRealNumCoach(mainJson.NumCoach) : 1,
                 Artist = mainJson.Artist || "Placeholder Artist",
                 Title = mainJson.Title || "Placeholder Title",
+                Difficulty = mainJson.Difficulty || 1,
                 AudioPreview = mainJson.AudioPreview || {}
                 Beats = mainJson.beats || [],
                 Pictos = mainJson.pictos || [],
@@ -143,8 +144,8 @@ function init() {
                     PhoneImages: BasicFunc.generatePhoneImages(MapName,CoachCount), // PhoneImages is for setting the path of song assets for the phone controller.
                     NumCoach: CoachCount, // NumCoach is the amount of coaches in the song.
                     MainCoach: -1, // MainCoach is probably used for setting the main coach, this is why first coach is 0 and not 1.
-                    Difficulty: BasicFunc.getRealDifficulty(mainJson.Difficulty), // Difficulty is for song's difficulty. Mostly used in JD14, JD19 and above.
-                    SweatDifficulty: BasicFunc.getRealDifficulty(mainJson.Difficulty) + 1 || mainJson.SweatDifficulty, // SweatDifficulty is the difficulty for sweat mode, I think + 1 can be a solution, this could be fixed.
+                    Difficulty: BasicFunc.getRealDifficulty(Difficulty), // Difficulty is for song's difficulty. Mostly used in JD14, JD19 and above.
+                    SweatDifficulty: BasicFunc.getRealDifficulty(Difficulty) + 1 || mainJson.SweatDifficulty, // SweatDifficulty is the difficulty for sweat mode, I think + 1 can be a solution, this could be fixed.
                     backgroundType: mainJson.BackgroundType || 0, // BackgroundType is used in JD14-15, not used in JD16 and above.
                     LyricsType: mainJson.LyricsType || 0, // LyricsType is used for displaying lyrics as karaoke or normal. 0 is normal, 1 is karaoke
                     Tags: ["main"], // Tags are used for categorizing, including/excluding songs. The "main" tag is used as default.
