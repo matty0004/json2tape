@@ -1,35 +1,158 @@
-// JSON 2 TAPE - by yunyl (1.0.0)
-// This file/project was created on April 21, 2021 9:30PM.
+/**
+ * 
+ * JSON 2 TAPE - Created on April 21, 2021 9:30PM
+ * 
+ * Bluestar is a Ubisoft engine that is used for Just Dance Now.
+ * You can convert Bluestar (JDN) formatted JSONs to UbiArt (TAPE) format with this tool.
+ * 
+ * Created by yunyl under Just Dance Alliance.
+ * Please credit us in your work if you are going to use this tool.
+ * 
+ */
+
+// NOTE: I will update this script everytime I got time for it.
+// It is messy and most comments are missing. You can contribute with your knowledge.
 
 
 // -- Modules
 // Required and used modules
 
-// Global
-const fs = require("fs"),
-      axios = require("axios"),
-      spawn = require('child_process').spawn
+    // Global
+    const fs = require("fs"),
+          axios = require("axios"),
+          chalk = require('chalk'),
+          inquirer = require("inquirer")
 
-// Local
-const BasicFunc = require("./scripts/basicFunc")
+    // Local
+    const BasicFunc = require("./scripts/basicFunc")
+
 // --
 
-// -- Files
-// Required files to read
-const readFile = (...modules) => modules.map(module => BasicFunc.parseJsonp(fs.readFileSync(module).toString()));
-let [
-    mainJson, 
-    moves0, 
-    moves1, 
-    moves2, 
-    moves3,
-    j2tSettings
-] = readFile("./input.json", "./input_moves0.json", "./input_moves1.json","./input_moves2.json","./input_moves3.json","./j2t_settings.json")
-// --
+
+// Welcome message
+console.log(
+    `\nWelcome to ${chalk.bold("JSON 2 TAPE")} by yunyl! Convert your Bluestar JSONs to UbiArt Tape format.`,
+)
+
+// An array of questions to ask to the user.
+let cliInput = [{
+    type: "list",
+    message: "Please select an option below.",
+    name: "options",
+    choices: [{
+          name: "Use local map files",
+          value: "local",
+        },
+        {
+          name: "Download map from JDNowWeb",
+          value: "jdnow",
+        },
+    ]
+}]
+
+// Execute the prompt input's and call __init__
+inquirer.prompt(cliInput).then(responses => {
+    
+    switch(responses.options) {
+        case "jdnow":
+                inquirer.prompt({
+                type: "input",
+                name: "mapName",
+                message: `Please enter the mapName you would like to download.`
+            }).then(answer => {
+
+                BasicFunc.debugLog(
+                    `\n[INFO] Your input files will be overwritten!`,
+                    "yellow"
+                )
+
+                let MapName = answer.mapName,
+                    BaseUrl = `http://jdnowweb-s.cdn.ubi.com/uat/release_tu2/20150928_1740/songs/${MapName}`,
+                    Assets = [{
+                            path: `/${MapName}.json`,
+                            filename: "input.json"
+                        }, {
+                            path: `/data/moves/${MapName}_moves0.json`,
+                            filename: "input_moves0.json"
+                        }, {
+                            path: `/data/moves/${MapName}_moves1.json`,
+                            filename: "input_moves1.json"
+                        }, {
+                            path: `/data/moves/${MapName}_moves2.json`,
+                            filename: "input_moves2.json"
+                        }, {
+                            path: `/data/moves/${MapName}_moves3.json`,
+                            filename: "input_moves3.json"
+                    }]
+
+                    // We have to check if mapName has a folder in JDNOWWEB and then proceed.
+                    axios({
+                        method: "HEAD",
+                        url: BaseUrl + "/"
+                    })
+                    .then(response => {})
+                    .catch(error => {
+                        BasicFunc.debugLog(
+                            `[WARNING!] Are you sure ${MapName} is an existing mapName? Exiting...`,
+                            "red"
+                        )
+                        process.exit(1)
+                    })
+
+                    Promise.all(Assets.map((asset) => {
+                        return axios({
+                            method: "GET",
+                            url: BaseUrl + asset.path
+                        })
+                        .then(response => {
+                            BasicFunc.debugLog(
+                                `[DOWNLOADED] Successfully saved ${asset.path}`
+                            )
+                            fs.writeFileSync(
+                                `./${asset.filename}`,
+                                response.data
+                            )
+                        })
+                        .catch(error => {
+                            if (!asset.path.includes("moves"))
+                                BasicFunc.debugLog(
+                                    `[WARNING!] An error occured while trying to download ${asset.path}`,
+                                    "red"
+                                )
+                        })
+                    }))
+                    .then(() => {
+                        console.log(`${chalk.bold("\nStarting converting process...")}`)
+                        init()
+                    })
+
+            })
+            
+            break;
+        case "local":
+            init()
+            break;
+    }
+
+
+})
 
 // -- Init
 // Main function where everything happens.
 function init() {
+
+    // -- Files
+    // Required files to read
+    const readFile = (...modules) => modules.map(module => BasicFunc.parseJsonp(fs.readFileSync(module).toString()));
+    let [
+        mainJson, 
+        moves0, 
+        moves1, 
+        moves2, 
+        moves3,
+        j2tSettings
+    ] = readFile("./input.json", "./input_moves0.json", "./input_moves1.json","./input_moves2.json","./input_moves3.json","./j2t_settings.json")
+    // --
 
     // -- Variables
 
@@ -51,12 +174,12 @@ function init() {
                 Title = mainJson.Title || "Placeholder Title",
                 Difficulty = mainJson.Difficulty || 1,
                 AudioPreview = mainJson.AudioPreview || {}
-                Beats = mainJson.beats || [],
+                Beats = mainJson.beats ? mainJson.beats : [],
                 Pictos = mainJson.pictos || [],
                 Lyrics = mainJson.lyrics || [],
                 BeatsMap24 = []
 
-            if (Beats[0] !== 0) {
+            if (Beats.length > 5 && Beats[0] !== 0) {
                 let firstBeat = Beats[0],
                     nextBeats = Beats.slice(0, 5)
                 for (let i = 0; i < 5; i++) Beats.splice(i, 0, nextBeats[i] - firstBeat);
@@ -65,16 +188,12 @@ function init() {
             
 
     // --
-
-
-
-    // -- Markers
-    // Create and set marker timings for the song.
-    // let markers = BasicFunc.getMarkers(mainJson["beats"])
+        
     // --
 
     // -- Functions
     // Required and used functions
+
     // getSetting is used for receiving and returning the requested setting from the settings JSON.
     function getSetting(settingName) {
         return j2tSettings[settingName.split("_")[0]][settingName]
@@ -88,9 +207,19 @@ function init() {
                 path = `${getSetting("default_outputFolder")}/${MapName}/songdesc.tpl.ckd`
                 break;
             case "dtape":
+                if (!json.Clips || json.Clips.length == 0)
+                    BasicFunc.debugLog(
+                        `[INFO] Your DTAPE output is empty. Are you sure you are not missing anything?`,
+                        "yellow"
+                    )
                 path = `${getSetting("default_outputFolder")}/${MapName}/${MapName.toLowerCase()}_tml_dance.dtape.ckd`
                 break;
             case "ktape":
+                if (!json.Clips || json.Clips.length == 0)
+                    BasicFunc.debugLog(
+                        `[INFO] Your KTAPE output is empty. Are you sure you are not missing anything?`,
+                        "yellow"
+                    )
                 path = `${getSetting("default_outputFolder")}/${MapName}/${MapName.toLowerCase()}_tml_karaoke.ktape.ckd`
                 break;
             case "musictrack":
@@ -118,9 +247,40 @@ function init() {
     // Create output_folder/mapName if it does not exist.
     if (!fs.existsSync(`${getSetting("default_outputFolder")}/${MapName}/`)) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, {  recursive: true  })
 
+
+    console.log(
+       `\n---- ${chalk.cyan("mapName:")} ${MapName} ---- ${chalk.cyan("coachCount:")} ${CoachCount} ----\n`
+    )
+
+    
+    // -- Input checker
+    // We check if user's input data is missing or empty and show warning messages.
+    if (!Beats || Beats.length < 1) {
+        BasicFunc.debugLog(
+            `[WARNING!] Your Bluestar Beats are empty. They are required.`,
+            "red"
+        )
+        process.exit(1)
+    }
+    if (!Pictos || Pictos.length < 1) {
+        BasicFunc.debugLog(
+            `[INFO] Your Bluestar Pictos are empty.`,
+            "yellow"
+        )
+    }
+    if (!Lyrics || Lyrics.length < 1) {
+        BasicFunc.debugLog(
+            `[INFO] Your Bluestar Lyrics are empty.`,
+            "yellow"
+        )
+    }
+    // --
+
+
     // -- SONGDESC
     // Create song description file, used for keeping song title, artist, coachCount and such.
     function songdescUtility() {
+
         let JD_SongDescTemplate = {
             // -- CLASS = Actor_Template
             __class: "Actor_Template",
@@ -137,9 +297,9 @@ function init() {
                     MapName: MapName, // MapName
                     JDVersion: mainJson.JDVersion || getSetting("default_JDVersion"), // JDVersion is for setting the version of the game you are adding this song to.
                     OriginalJDVersion: mainJson.OriginalJDVersion || getSetting("default_OriginalJDVersion"), // OriginalJDVersion is used for displaying which version this song is from.
-                    Artist: mainJson.Artist || "Unknown Artist", // Song Artist
+                    Artist: Artist || "Unknown Artist", // Song Artist
                     DancerName: "Unknown Dancer" || mainJson.DancerName, // DancerName is unknown and probably left-over/unused feature from JD14.
-                    Title: mainJson.Title || "Unknown Title", // Song Title
+                    Title: Title || "Unknown Title", // Song Title
                     Credits: mainJson.Credits || getSetting("default_Credits"), // Credits, I think we all know what this is.
                     PhoneImages: BasicFunc.generatePhoneImages(MapName,CoachCount), // PhoneImages is for setting the path of song assets for the phone controller.
                     NumCoach: CoachCount, // NumCoach is the amount of coaches in the song.
@@ -158,6 +318,9 @@ function init() {
                 }
             ]
         }
+        BasicFunc.debugLog(
+            `[JD_SongDescTemplate] Created song description successfully.`
+        )
         writeToFolder(JD_SongDescTemplate, "songdesc")
         return
 
@@ -195,14 +358,17 @@ function init() {
                             previewEntry: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewEntry,
                             previewLoopStart: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewLoopStart,
                             previewLoopEnd: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewLoopEnd,
-                            volume: 0
+                            volume: 1
                         },
                         path: `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}/audio/${MapName.toLowerCase()}.${getSetting("musictrack_audioFormat")}`,
                         url: `jmcs://jd-contents/${MapName}/${MapName}.ogg`
                     }
                 }
             ]
-        }    
+        }
+        BasicFunc.debugLog(
+            `[MusicTrackComponent_Template] Created MusicTrack component successfully.`
+        )
         writeToFolder(MusicTrackComponent_Template, "musictrack")
         return    
     }
@@ -296,6 +462,9 @@ function init() {
         })
         // --
 
+        BasicFunc.debugLog(
+            `[Tape] Created Dance Tape (DTAPE) successfully.`
+        )
         writeToFolder(Tape, "dtape")
         return
 
@@ -313,6 +482,7 @@ function init() {
             FreeResourcesAfterPlay: 0,
             MapName: MapName
         }
+		
         Lyrics.forEach(lyric => {
             let KaraokeClip = {
                 __class: "KaraokeClip",
@@ -331,14 +501,15 @@ function init() {
             }
             Tape.Clips.push(KaraokeClip)
         })
+
+        BasicFunc.debugLog(
+            `[Tape] Created Karaoke Tape (KTAPE) successfully.`
+        )
         writeToFolder(Tape, "ktape")
     }
     songdescUtility()
+    musicTrackUtility()
     dtapeUtility()
     ktapeUtility()
-    musicTrackUtility()
 }
 // --
-
-
-init() // Execute init to start the converting process.

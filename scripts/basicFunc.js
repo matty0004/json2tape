@@ -1,9 +1,23 @@
-const hexRgb = require('hex-rgb');
+/**
+ * BasicFunc
+ * This is a module script that helps J2T. 
+ */
 
-var JSONP_PREFIX = /^[^(]*?\(/;
-var JSONP_SUFFIX = /\)[^)]*?$/;
-// parseJsonp is used for parsing newer JDNOW JSONs into read-able format.
-exports.parseJsonp = function (jsonpString) {
+const hexRgb = require('hex-rgb'),
+      chalk = require("chalk")
+
+/**
+ * parseJsonp is a JSON parser for Bluestar format JSONs.
+ * This was taken from Just Dance Now source code.
+ * https://jdnowweb-s.cdn.ubi.com/prod/main/20210719_1009/web/js/utils.js - Line 179
+ * @param {*} jsonpString JSON to format
+ * @returns {*}
+ */
+function parseJsonp(jsonpString) {
+
+    const JSONP_PREFIX = /^[^(]*?\(/,
+          JSONP_SUFFIX = /\)[^)]*?$/;
+
     if (JSONP_PREFIX.test(jsonpString) && JSONP_SUFFIX.test(jsonpString)) {
         var prefix = jsonpString.match(JSONP_PREFIX)[0];
         var suffix = jsonpString.match(JSONP_SUFFIX)[0];
@@ -12,16 +26,25 @@ exports.parseJsonp = function (jsonpString) {
     else return JSON.parse(jsonpString)
 };
 
-// shuffleArray can shuffle/randomize given array.
-exports.shuffleArray = function(array) {
-    return shuffled = array
+/**
+ * shuffleArray randomizes/shuffles given array.
+ * @param {Array} Arr 
+ * @returns {Array}
+ */
+function shuffleArray(Arr) {
+    return shuffled = Arr
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value)
 }
 
-// generatePhoneImages is used for generating PhoneImages object for song description.
-exports.generatePhoneImages = function(mapName,coachCount) {
+/**
+ * generatePhoneImages loops CoachCount times to generate phoneImages object for song description.
+ * @param {String} mapName 
+ * @param {Number} coachCount 
+ * @returns {Object}
+ */
+function generatePhoneImages(mapName,coachCount) {
     let phoneimages = {
         cover: `world/maps/${mapName.toLowerCase()}/menuart/textures/${mapName.toLowerCase()}_cover_phone.jpg`
     }
@@ -31,8 +54,12 @@ exports.generatePhoneImages = function(mapName,coachCount) {
     return phoneimages
 }
 
-// getRealNumCoach is used for returning the right numCoach. Some JDN JSONs got NumCoach as "Solo" or "Quatro" instead of an integer.
-exports.getRealNumCoach = function(CoachCount) {
+/**
+ * getRealNumCoach converts string CoachCount (Solo, Duet, Trio...) to numbered CoachCount.
+ * @param {Number} CoachCount 
+ * @returns {Number}
+ */
+function getRealNumCoach(CoachCount) {
     // CoachCount is already an integer so return it back.
     if (!isNaN(CoachCount)) return CoachCount
     else { // If coachCount is not a number, process it
@@ -47,8 +74,12 @@ exports.getRealNumCoach = function(CoachCount) {
     }
 }
 
-// getRealDifficulty is used for returning the right Difficulty. Some JDN JSONs got Difficulty as "Easy" or "Hard" instead of an integer.
-exports.getRealDifficulty = function(Difficulty) {
+/**
+ * getRealDifficulty converts string difficulties (Easy, Hard, Medium...) to numbered difficulties.
+ * @param {String} Difficulty 
+ * @returns {Number}
+ */
+function getRealDifficulty(Difficulty = "Easy") {
     // Difficulty is already an integer so return it back.
     if (!isNaN(Difficulty)) return Difficulty
     else { // If Difficulty is not a number, process it
@@ -62,8 +93,14 @@ exports.getRealDifficulty = function(Difficulty) {
     }
 }
 
-// getRealDifficulty is used for converting JDN colors to UbiArt RGB for songdescription.
-exports.getRealDefaultColors = function(DefaultColors,lyricsColor) {
+/**
+ * getRealDefaultColors converts Bluestar DefaultColors object and LyricsColor key to UbiArt formatted RGB colors.
+ * It converts HEX color to RGB and divides each RGB value with 255.
+ * @param {Object} DefaultColors 
+ * @param {String} lyricsColor 
+ * @returns {Object}
+ */
+function getRealDefaultColors(DefaultColors = {}, lyricsColor = "ffffff") {
     function hexToUbi(color) {
         if (color.toLowerCase().includes("0xff")) {
             let json = hexRgb(color.substring(4))
@@ -82,115 +119,31 @@ exports.getRealDefaultColors = function(DefaultColors,lyricsColor) {
         return
     }
     return {
-        "songcolor_1a": DefaultColors["songColor_1A"] ? hexToUbi(DefaultColors["songColor_1A"]) : [1,1,1,1], // Main 1A color, usually lighter.
-        "songcolor_1b": DefaultColors["songColor_1b"] ? hexToUbi(DefaultColors["songColor_1B"]) : [1,1,1,1], // Main 2B color, usually darker.
-        "songcolor_2a": DefaultColors["songColor_2a"] ? hexToUbi(DefaultColors["songColor_2A"]) : [1,1,1,1], // Banner 1A color, usually lighter.
-        "songcolor_2b": DefaultColors["songColor_2b"] ? hexToUbi(DefaultColors["songColor_2B"]) : [1,1,1,1], // Banner 2B color, usually darker.
+        "songcolor_1a": DefaultColors["songColor_1A"] ? hexToUbi(DefaultColors["songColor_1A"]) : [1, 0.266667, 0.266667, 0.266667], // Main 1A color, usually lighter.
+        "songcolor_1b": DefaultColors["songColor_1b"] ? hexToUbi(DefaultColors["songColor_1B"]) : [1, 0.066667, 0.066667, 0.066667], // Main 2B color, usually darker.
+        "songcolor_2a": DefaultColors["songColor_2a"] ? hexToUbi(DefaultColors["songColor_2A"]) : [1, 0.666667, 0.666667, 0.666667], // Banner 1A color, usually lighter.
+        "songcolor_2b": DefaultColors["songColor_2b"] ? hexToUbi(DefaultColors["songColor_2B"]) : [1, 0.466667, 0.466667, 0.466667], // Banner 2B color, usually darker.
         "lyrics": lyricsColor ? hexToUbi(lyricsColor) : [1,1,1,1], // Lyrics color
         "theme": [1, 1, 1, 1] // #FFFFFF as default.
     }
 }
 
-exports.musictrackExtras = function() {
-    return {
-    signatures: [{
-            __class: "MusicSignature",
-            marker: 1,
-            beats: 3
-        }, {
-            __class: "MusicSignature",
-            marker: 4,
-            beats: 4
-        }, {
-            __class: "MusicSignature",
-            marker: 194,
-            beats: 3
-        }, {
-            __class: "MusicSignature",
-            marker: 197,
-            beats: 4
-        }
-    ],
-    sections: [{
-        __class: "MusicSection",
-        marker: 1,
-        sectionType: 6,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 19,
-        sectionType: 1,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 52,
-        sectionType: 7,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 68,
-        sectionType: 3,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 84,
-        sectionType: 7,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 100,
-        sectionType: 1,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 132,
-        sectionType: 7,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 148,
-        sectionType: 3,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 164,
-        sectionType: 7,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 190,
-        sectionType: 3,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 196,
-        sectionType: 2,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 194,
-        sectionType: 6,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 259,
-        sectionType: 3,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 195,
-        sectionType: 7,
-        comment: ""
-    }, {
-        __class: "MusicSection",
-        marker: 291,
-        sectionType: 7,
-        comment: ""
-    }] 
-    }
+/**
+ * debugLog is for logging prettier console messages with chalk package.
+ * @param {String} msg Message to log. Must start with [] - EX: "[HELLO] Welcome, hello!""
+ * @param {String} color List of colors can be found on https://www.npmjs.com/package/chalk
+ */
+function debugLog(msg, color = "green") {
+    console.log(`${chalk[color](msg.match(/\[(.*?)\]/)[0])} ${msg.split("]")[1].substr(1)}`)
 }
 
-exports.getPreviewData = function(AudioPreview,beats) {
+/**
+ * getPreviewData is for detecting and returning the correct Bluestar AudioPreview data.
+ * Some maps have coverflow while some has prelobby. This will help with automatically detecting stuff.
+ * @param {Object} AudioPreview
+ * @returns {Object}
+ */
+function getPreviewData(AudioPreview = {}) {
     return {
         previewEntry: AudioPreview["coverflow"]["startbeat"] || AudioPreview["prelobby"]["startbeat"] || 0,
         previewLoopStart: AudioPreview["coverflow"]["startbeat"] || AudioPreview["prelobby"]["startbeat"] || 0,
