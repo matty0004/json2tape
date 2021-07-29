@@ -54,6 +54,8 @@ let cliInput = [{
 inquirer.prompt(cliInput).then(responses => {
     
     switch(responses.options) {
+
+        // If JDNOW downloading was chosen, we download the files from JDNOWWEB.
         case "jdnow":
                 inquirer.prompt({
                 type: "input",
@@ -92,9 +94,8 @@ inquirer.prompt(cliInput).then(responses => {
                     })
                     .then(response => {})
                     .catch(error => {
-                        console.log(error)
                         BasicFunc.debugLog(
-                            `[WARNING!] Are you sure ${MapName} is an existing mapName? Exiting...`,
+                            `[WARNING!] An error occured. Are you sure ${MapName} is an existing mapName? Exiting...`,
                             "red"
                         )
                         process.exit(1)
@@ -130,6 +131,8 @@ inquirer.prompt(cliInput).then(responses => {
             })
             
             break;
+        
+        // If local was selected, we call init() directly.
         case "local":
             init()
             break;
