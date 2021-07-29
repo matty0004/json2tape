@@ -151,3 +151,14 @@ function getPreviewData(AudioPreview = {}) {
     }
 
 }
+
+module.exports = {
+    parseJsonp,
+    shuffleArray,
+    generatePhoneImages,
+    getRealNumCoach,
+    getRealDifficulty,
+    getRealDefaultColors,
+    debugLog,
+    getPreviewData
+}

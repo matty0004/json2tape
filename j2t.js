@@ -92,6 +92,7 @@ inquirer.prompt(cliInput).then(responses => {
                     })
                     .then(response => {})
                     .catch(error => {
+                        console.log(error)
                         BasicFunc.debugLog(
                             `[WARNING!] Are you sure ${MapName} is an existing mapName? Exiting...`,
                             "red"
@@ -314,6 +315,10 @@ function init() {
                     MojoValue: mainJson.MojoValue || 0, // MojoValue is not known, even if it is, I doubt it would work.
                     CountInProgression: 1 || mainJson.CountInProgression, // CountInProgression is unknown.
                     DefaultColors: BasicFunc.getRealDefaultColors(mainJson.DefaultColors,mainJson.lyricsColor), // DefaultColors is used for displaying menu colors. 1A and 1B are big colors while 2A and 2B are banner colors. A colors are usually lighter and B colors are darker.
+                    Paths: {
+                        Avatars: null,
+                        AsyncPlayers:null
+                    },
                     VideoPreviewPath: "" // VideoPreviewPath was used in Just Dance 2019 demo, not used and not required.
                 }
             ]
@@ -399,17 +404,17 @@ function init() {
                 GoldMove: move.goldMove ? 1 : 0,
                 CoachId: move.moveId,
                 MoveType: 0,
-                Color: [1, 0.500000, 0.500000, 0.500001],
+                Color: [0x1,0.5,0.5,0.500001],
                 MotionPlatformSpecifics: {
                     X360: {
                         __class: "MotionPlatformSpecific",
-                        ScoreScale: 1,
+                        ScoreScale: 1.4,
                         ScoreSmoothing: 0,
                         ScoringMode: 0
                     },
                     ORBIS: {
                         __class: "MotionPlatformSpecific",
-                        ScoreScale: 1,
+                        ScoreScale: 1.3,
                         ScoreSmoothing: 0,
                         ScoringMode: 0
                     },
@@ -446,6 +451,8 @@ function init() {
         // --
 
         // -- GoldEffectClip
+        // Sadly, we can't "guess" GoldEffectClip times so we take all GoldMove: 1
+        // MoveClips and add 24 to their time for their GoldEffectClip.
         Tape.Clips.forEach((Clip, i) => {
             if (Clip["__class"] === "MotionClip" && Clip["GoldMove"] && Clip["GoldMove"] == 1) {
                 let GoldEffectClip = {
@@ -474,6 +481,7 @@ function init() {
     // -- KTAPE
     // Create karaoke tape file that contains lyrics, their timing and duration.
     function ktapeUtility() {
+
         let Tape = {
             __class: "Tape",
             Clips: [],
@@ -511,5 +519,9 @@ function init() {
     musicTrackUtility()
     dtapeUtility()
     ktapeUtility()
+    console.log("")
+    BasicFunc.debugLog(
+        `[DONE!] The files were successfully converted. Please credit yunyl in your work!`
+    )
 }
 // --
