@@ -68,7 +68,7 @@ inquirer.prompt(cliInput).then(responses => {
                     "yellow"
                 )
 
-                let MapName = answer.mapName,
+                let MapName = answer.mapName.trim(),
                     BaseUrl = `http://jdnowweb-s.cdn.ubi.com/uat/release_tu2/20150928_1740/songs/${MapName}`,
                     Assets = [{
                             path: `/${MapName}.json`,
