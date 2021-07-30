@@ -29,9 +29,12 @@
   "homepage": "https://github.com/heyimyunyl/json2tape#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "chalk": "^4.1.1",
     "child_process": "^1.0.2",
     "everpolate": "0.0.3",
     "fs": "0.0.1-security",
-    "hex-rgb": "^4.3.0"
+    "fs-extra": "^10.0.0",
+    "hex-rgb": "^4.3.0",
+    "inquirer": "^8.1.2"
   }
 }
