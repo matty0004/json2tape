@@ -19,9 +19,11 @@
 
     // Global
     const fs = require("fs"),
+          fse = require("fs-extra"),
           axios = require("axios"),
           chalk = require('chalk'),
-          inquirer = require("inquirer")
+          inquirer = require("inquirer"),
+          spawn = require("child_process").spawn;
 
     // Local
     const BasicFunc = require("./scripts/basicFunc")
@@ -127,7 +129,7 @@ inquirer.prompt(cliInput).then(responses => {
                         console.log(`${chalk.bold("\nStarting converting process...")}`)
                         init()
                     })
-
+                    
             })
             
             break;
@@ -330,8 +332,7 @@ function init() {
             `[JD_SongDescTemplate] Created song description successfully.`
         )
         writeToFolder(JD_SongDescTemplate, "songdesc")
-        return
-
+        return true;
     }
 
 
@@ -378,7 +379,7 @@ function init() {
             `[MusicTrackComponent_Template] Created MusicTrack component successfully.`
         )
         writeToFolder(MusicTrackComponent_Template, "musictrack")
-        return    
+        return true;    
     }
 
 
@@ -476,7 +477,7 @@ function init() {
             `[Tape] Created Dance Tape (DTAPE) successfully.`
         )
         writeToFolder(Tape, "dtape")
-        return
+        return true;
 
     }
 
@@ -517,14 +518,85 @@ function init() {
             `[Tape] Created Karaoke Tape (KTAPE) successfully.`
         )
         writeToFolder(Tape, "ktape")
+        return true;
     }
-    songdescUtility()
-    musicTrackUtility()
-    dtapeUtility()
-    ktapeUtility()
-    console.log("")
-    BasicFunc.debugLog(
-        `[DONE!] The files were successfully converted. Please credit yunyl in your work!`
-    )
+
+    function pictosUtility() {
+
+        // We check if splitting pictos is enabled and the map has a picto-sprite first and then continue.
+        if (getSetting("default_splitPictos") && getSetting("default_splitPictos") === true) {
+            axios({
+                method: "HEAD",
+                url: `https://jdnowweb-s.cdn.ubi.com/uat/release_tu2/20150928_1740/songs/${MapName}/assets/web/pictos-sprite.png`
+            })
+            .then(response => {
+
+                // Since NJS is a shit way to deal with images, we use Python and PIL library.
+                // We call pictocutter.py made by pashtet with the MapName as an argument.
+                const pictocutter = spawn('python', ["./scripts/pictocutter/pictocutter.py", MapName]);
+
+                // If everything was successfull, do stuff.
+                pictocutter.stdout.on("data", function(data) {
+
+                    // Move the pictos folder from picto_output and delete the folders.
+
+                    let source = `./scripts/pictocutter/picto_output/${MapName}/`,
+                        dest = `${getSetting("default_outputFolder")}/${MapName}/pictos/`
+
+
+                    /**
+                     * PLEASE UPDATE THIS PART!
+                     * This part is messy, please update it.
+                     * tag:UPDATE
+                     */
+                    fs.mkdirSync(dest, { recursive:true }) // We create our destination if it does not exist.
+                    fse.moveSync(source, dest, {overwrite:true}) // We move the picto_output folder to our output folder.
+
+                    // We delete our output and input folders.
+                    fs.rmdirSync(`./scripts/pictocutter/picto_input/`, {
+                        recursive: true
+                    }) 
+                    fs.rmdirSync(`./scripts/pictocutter/picto_output/`, {
+                        recursive: true
+                    }) 
+
+                    BasicFunc.debugLog(
+                        `[PictoCutter] Pictos were cut successfully.`
+                    )
+                    return true;
+
+                });
+
+                // If the script threw an issue, console log it.
+                pictocutter.stderr.on("data", (data) => {
+
+                    BasicFunc.debugLog(
+                        `[PictoCutter] An error occured with the picto cutter script.`,
+                        "red"
+                    )
+                    console.log(`The error was \n${data.toString()}`)
+                    process.exit(1)
+                    
+
+                });
+
+            })
+            .catch(error => {})
+        }
+    }
+    Promise.all([
+        pictosUtility(),
+        songdescUtility(), 
+        musicTrackUtility(), 
+        dtapeUtility(),
+        ktapeUtility()
+    ])
+    .then(() => {
+        console.log("")
+        BasicFunc.debugLog(
+            `[DONE!] The files were successfully converted. Please credit yunyl in your work!`
+        )
+    })
+    return true;
 }
 // --
