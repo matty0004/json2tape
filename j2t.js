@@ -26,7 +26,7 @@
           spawn = require("child_process").spawn;
 
     // Local
-    const BasicFunc = require("./scripts/basicFunc")
+    const BasicFunc = require("./scripts/basicFunc.js")
 
 // --
 
