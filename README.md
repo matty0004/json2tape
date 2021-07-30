@@ -6,13 +6,18 @@ You can convert Bluestar (JDN) formatted JSONs to UbiArt (TAPE) format with this
 Created by yunyl under Just Dance Alliance.
 Please credit us in your work if you are going to use this tool.
 
+## Features
+- Cut pictos automatically and rename them.
+- Download map files from Just Dance Now archive and convert them.
+- Customize the script's behaviour from it's settings.
+
 ## Requirements
 J2T requires [Node.js](https://nodejs.org/) v14+ to run.
 
 If you want to use auto picto splitter, you need [Python](https://python.org).
  - Once you install Python, open CMD and type this `pip install Pillow` to install the image library.
 
-If you don't, you can change `default_splitPictos` from Settings to false.
+If you don't, you can change `default_splitPictos` from settings to false.
 
 ## How to use?
 1. Download the source code above and extract it to a folder.
