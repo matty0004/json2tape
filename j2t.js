@@ -550,7 +550,7 @@ function init() {
             }))
             .then(() => {
                 BasicFunc.debugLog(
-                    `[pictosMsmsUtility] Successfully downloaded all Movespace (MSM) classifiers.`
+                    `[msmsUtility] Successfully downloaded all Movespace (MSM) classifiers.`
                 )
             })
 
@@ -559,6 +559,7 @@ function init() {
     }
 
     function pictosUtility() {
+
         // We check if splitting pictos is enabled and the map has a picto-sprite first and then continue.
         if (getSetting("default_splitPictos") && getSetting("default_splitPictos") === true) {
             axios({
@@ -597,7 +598,7 @@ function init() {
                     }) 
 
                     BasicFunc.debugLog(
-                        `[PictoCutter] Pictos were cut successfully.`
+                        `[pictosUtility] Pictos were cut successfully.`
                     )
                     return true;
 
@@ -607,7 +608,7 @@ function init() {
                 pictocutter.stderr.on("data", (data) => {
 
                     BasicFunc.debugLog(
-                        `[pictosMsmsUtility] An error occured with the picto cutter script.`,
+                        `[pictosUtility] An error occured with the picto cutter script.`,
                         "red"
                     )
                     console.log(`The error was \n${data.toString()}`)
