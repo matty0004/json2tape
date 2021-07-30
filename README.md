@@ -7,7 +7,7 @@ Created by yunyl under Just Dance Alliance.
 Please credit us in your work if you are going to use this tool.
 
 ## Features
-- Cut pictos automatically and rename them.
+- Cut pictos automatically and rename them. (Duet, Trio and Quatro pictos require to be cropped)
 - Download map files from Just Dance Now archive and convert them.
 - Customize the script's behaviour from it's settings.
 
