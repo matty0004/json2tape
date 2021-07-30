@@ -8,6 +8,7 @@ Please credit us in your work if you are going to use this tool.
 
 ## Features
 - Cut pictos automatically and rename them. (Duet, Trio and Quatro pictos require to be cropped)
+- Download Movespace (MSM) files.
 - Download map files from Just Dance Now archive and convert them.
 - Customize the script's behaviour from it's settings.
 - Your input files gets parsed, which means you can import JSONs from JDNOW without removing the mapName at the start of the file.
