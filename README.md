@@ -67,6 +67,7 @@ J2T comes with a configuration JSON that you can edit to change the script's beh
 ## Credits
 - PASHTET for picto cutter script
 - Diogo for letting me know about Tape time format.
+- Mitchy for help.
 
 # License
 This project uses [Polyform Strict](https://polyformproject.org/licenses/strict/1.0.0) license.
