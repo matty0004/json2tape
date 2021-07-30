@@ -19,7 +19,7 @@ J2T requires [Node.js](https://nodejs.org/) v14+ to run.
 
 4. When it's done, your files will be ready in output/mapName folder!
 
-### Settings
+## Settings
 J2T comes with a configuration JSON that you can edit to change the script's behaviours.
 ```
 {
@@ -49,6 +49,9 @@ J2T comes with a configuration JSON that you can edit to change the script's beh
     }
 }
 ```
+
+## TO-DO
+1. Add picto splitting and naming function for JDNOW-WEB downloaded maps.
 
 # License
 This project uses [Polyform Strict](https://polyformproject.org/licenses/strict/1.0.0) license.
