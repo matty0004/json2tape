@@ -10,6 +10,7 @@ Please credit us in your work if you are going to use this tool.
 - Cut pictos automatically and rename them. (Duet, Trio and Quatro pictos require to be cropped)
 - Download map files from Just Dance Now archive and convert them.
 - Customize the script's behaviour from it's settings.
+- Your input files gets parsed, which means you can import JSONs from JDNOW without removing the mapName at the start of the file.
 
 ## Requirements
 J2T requires [Node.js](https://nodejs.org/) v14+ to run.
