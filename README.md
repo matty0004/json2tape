@@ -64,5 +64,9 @@ J2T comes with a configuration JSON that you can edit to change the script's beh
 ## TO-DO
 1. Somehow fix picto splitter console log after the end message...
 
+## Credits
+- PASHTET for picto cutter script
+- Diogo for letting me know about Tape time format.
+
 # License
 This project uses [Polyform Strict](https://polyformproject.org/licenses/strict/1.0.0) license.
