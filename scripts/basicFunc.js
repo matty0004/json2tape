@@ -145,10 +145,10 @@ function debugLog(msg, color = "green") {
  */
 function getPreviewData(AudioPreview = {}) {
     let finalData = {
-        previewEntry: AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0),
-        previewLoopStart: AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0),
+        previewEntry: (AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0)) || 0,
+        previewLoopStart: (AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0)) || 0,
     }
-    finalData.previewLoopEnd = AudioPreview["coverflow"]["endbeat"] ? AudioPreview["coverflow"]["endbeat"] : (AudioPreview["prelobby"]["endbeat"] ? AudioPreview["prelobby"]["endbeat"] : finalData.previewEntry + 30)
+    finalData.previewLoopEnd = (AudioPreview["coverflow"]["endbeat"] ? AudioPreview["coverflow"]["endbeat"] : (AudioPreview["prelobby"]["endbeat"] ? AudioPreview["prelobby"]["endbeat"] : finalData.previewEntry + 30)) || 60
     return finalData
 }
 
