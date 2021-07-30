@@ -521,8 +521,44 @@ function init() {
         return true;
     }
 
-    function pictosUtility() {
+    function msmsUtility() {
 
+        // We check if downloading MSMs is enabled.
+        if (getSetting("default_downloadMsms") && getSetting("default_downloadMsms") === true) {
+
+
+            // Create the classifiers folder.
+            let msmFolder = `${getSetting("default_outputFolder")}/${MapName}/classifiers`
+            fs.mkdirSync(msmFolder, { recursive:true })
+
+
+            // Loop through all MSM names and download them.
+            Promise.all(Moves.map((move) => {
+                let msmName = move.name
+
+                if (!fs.existsSync(msmFolder + "/" + msmName + ".msm")) {
+                    axios({
+                        method: "GET",
+                        responseType: "arraybuffer",
+                        url: `https://jdnowweb-s.cdn.ubi.com/uat/release_tu2/20150928_1740/songs/${MapName}/data/classifiers/${msmName}.msm`
+                    })
+                    .then(response => {
+                        fs.writeFileSync(msmFolder + "/" + msmName + ".msm", Buffer.from(response.data))
+                    })
+                    .catch(error => {})
+                }
+            }))
+            .then(() => {
+                BasicFunc.debugLog(
+                    `[pictosMsmsUtility] Successfully downloaded all Movespace (MSM) classifiers.`
+                )
+            })
+
+
+        }
+    }
+
+    function pictosUtility() {
         // We check if splitting pictos is enabled and the map has a picto-sprite first and then continue.
         if (getSetting("default_splitPictos") && getSetting("default_splitPictos") === true) {
             axios({
@@ -571,7 +607,7 @@ function init() {
                 pictocutter.stderr.on("data", (data) => {
 
                     BasicFunc.debugLog(
-                        `[PictoCutter] An error occured with the picto cutter script.`,
+                        `[pictosMsmsUtility] An error occured with the picto cutter script.`,
                         "red"
                     )
                     console.log(`The error was \n${data.toString()}`)
@@ -585,11 +621,12 @@ function init() {
         }
     }
     Promise.all([
-        pictosUtility(),
         songdescUtility(), 
         musicTrackUtility(), 
         dtapeUtility(),
-        ktapeUtility()
+        ktapeUtility(),
+        msmsUtility(),
+        pictosUtility()
     ])
     .then(() => {
         console.log("")
@@ -597,6 +634,5 @@ function init() {
             `[DONE!] The files were successfully converted. Please credit yunyl in your work!`
         )
     })
-    return true;
 }
 // --

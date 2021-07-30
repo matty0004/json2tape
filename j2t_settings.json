@@ -13,6 +13,7 @@
 		"musictrack_audioFormat" : "wav"
 	},
 	"default": {
+		"default_downloadMsms": true,
 		"default_splitPictos": true,
 		"default_minifyJSONs": false,
 		"default_outputFolder": "./output",

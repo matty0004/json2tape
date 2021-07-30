@@ -144,12 +144,12 @@ function debugLog(msg, color = "green") {
  * @returns {Object}
  */
 function getPreviewData(AudioPreview = {}) {
-    return {
-        previewEntry: AudioPreview["coverflow"]["startbeat"] || AudioPreview["prelobby"]["startbeat"] || 0,
-        previewLoopStart: AudioPreview["coverflow"]["startbeat"] || AudioPreview["prelobby"]["startbeat"] || 0,
-        previewLoopEnd: AudioPreview["coverflow"]["endbeat"] || AudioPreview["prelobby"]["endbeat"] || (AudioPreview["coverflow"]["startbeat"] || AudioPreview["prelobby"]["startbeat"]) + 30 
+    let finalData = {
+        previewEntry: AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0),
+        previewLoopStart: AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0),
     }
-
+    finalData.previewLoopEnd = AudioPreview["coverflow"]["endbeat"] ? AudioPreview["coverflow"]["endbeat"] : (AudioPreview["prelobby"]["endbeat"] ? AudioPreview["prelobby"]["endbeat"] : finalData.previewEntry + 30)
+    return finalData
 }
 
 module.exports = {
