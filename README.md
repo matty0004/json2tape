@@ -8,6 +8,7 @@ Please credit us in your work if you are going to use this tool.
 
 ## Requirements
 J2T requires [Node.js](https://nodejs.org/) v14+ to run.
+
 If you want to use auto picto splitter, you need [Python](https://python.org).
  - Once you install Python, open CMD and type this `pip install Pillow` to install the image library.
 
