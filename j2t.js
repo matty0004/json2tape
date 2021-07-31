@@ -118,11 +118,24 @@ inquirer.prompt(cliInput).then(responses => {
                             )
                         })
                         .catch(error => {
-                            if (!asset.path.includes("moves"))
+
+                            // If any moves file threw an error while downloading, we write it empty.
+                            if (asset.path.includes("moves")) {
+
+                                fs.writeFileSync(
+                                    `./${asset.filename}`,
+                                    JSON.stringify([])
+                                )
+
+                            }
+
+                            else if (!asset.path.includes("moves")) {
                                 BasicFunc.debugLog(
                                     `[WARNING!] An error occured while trying to download ${asset.path}`,
                                     "red"
                                 )
+                            }
+                                
                         })
                     }))
                     .then(() => {
@@ -194,18 +207,25 @@ function init() {
             
 
     // --
-        
-    // --
 
     // -- Functions
     // Required and used functions
 
-    // getSetting is used for receiving and returning the requested setting from the settings JSON.
+    /**
+     * getSetting reads J2T settings and returns values.
+     * @param {String} settingName 
+     * @returns {*}
+     */
     function getSetting(settingName) {
         return j2tSettings[settingName.split("_")[0]][settingName]
     }
 
-    // writeToFolder is used for writing file to map's folder.
+    /**
+     * writeToFolder writes output data to output folder depending on type.
+     * @param {*} json JSON file to write
+     * @param {String} type Type of file, dtape, ktape, musictrack...
+     * @param {Boolean} minifyJSON Minify the JSONs
+     */
     function writeToFolder(json, type, minifyJSON = getSetting("default_minifyJSONs")) {
         let path;
         switch(type) {
@@ -238,20 +258,38 @@ function init() {
         )
     }
 
-    // randomId returns a random Id for dTape, kTape
+    /**
+     * randomId generates a random number between two ranges.
+     * @param {Number} min minimum value
+     * @param {Number} max maximum value
+     * @returns {Number}
+     */
     function randomId(min = 1000000000, max = 4000000000) {
         return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
-    // ubiArtTime interpolates given time format.
+    /**
+     * ubiArtTime everpolarates given millisecond/second time.
+     * @param {Number} Time MS time
+     * @param {Boolean} parse Parse float
+     * @returns {Number}
+     */
     function ubiArtTime(Time, parse = false) {
         var linear = require('everpolate').linear
         return parse ? parseInt(linear(Time, Beats, BeatsMap24)[0]) : linear(Time, Beats, BeatsMap24)[0]
     }
+
     // --
 
-    // Create output_folder/mapName if it does not exist.
-    if (!fs.existsSync(`${getSetting("default_outputFolder")}/${MapName}/`)) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, {  recursive: true  })
+    // We delete the MapNames folder from output folder if it already exists.
+    if (fs.existsSync(
+        `${getSetting("default_outputFolder")}/${MapName}/`
+    )) fs.rmdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, { recursive: true });
+
+    // We create the MapNames folder in the output folder for the new files.
+    if (!fs.existsSync(
+        `${getSetting("default_outputFolder")}/${MapName}/`
+    )) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, { recursive: true })
 
 
     console.log(
@@ -499,13 +537,13 @@ function init() {
             let KaraokeClip = {
                 __class: "KaraokeClip",
                 Id: randomId(),
-                TrackId: 0,
+                TrackId: randomId(),
                 IsActive: 1,
                 StartTime: ubiArtTime(lyric.time, true),
                 Duration: ubiArtTime(lyric.duration, true),
                 Pitch: 7.000001,
                 Lyrics: lyric.text,
-                IsEndOfLine: 0,
+                IsEndOfLine: lyric.isLineEnding ? 1 : 0,
                 ContentType: 0,
                 StartTimeTolerance: 4,
                 EndTimeTolerance: 4,
@@ -632,7 +670,7 @@ function init() {
     .then(() => {
         console.log("")
         BasicFunc.debugLog(
-            `[DONE!] The files were successfully converted. Please credit yunyl in your work!`
+            `[DONE!] The files were successfully converted. Wait for pictos to cut if they are enabled. Please credit yunyl in your work!`
         )
     })
 }
