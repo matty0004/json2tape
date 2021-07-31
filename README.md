@@ -53,7 +53,7 @@ J2T comes with a configuration JSON that you can edit to change the script's beh
     },
     # Default configuration
     "default": {
-		      "default_downloadMsms": true, # If you want to download MSM files.
+        "default_downloadMsms": true, # If you want to download MSM files.
         "default_splitPictos": true, # If you want to split pictos.
         "default_minifyJSONs": false, # Minify all JSON files in output folder.
         "default_outputFolder": "./output", # Output folder name, must start with ./
