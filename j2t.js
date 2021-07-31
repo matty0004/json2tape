@@ -280,7 +280,7 @@ function init() {
     }
 
     // --
-
+    
     // We delete the MapNames folder from output folder if it already exists.
     if (fs.existsSync(
         `${getSetting("default_outputFolder")}/${MapName}/`
@@ -438,7 +438,7 @@ function init() {
             let MotionClip = {
                 __class: "MotionClip",
                 Id: randomId(),
-                TrackId: 0,
+                TrackId: randomId(),
                 IsActive: 1,
                 StartTime: ubiArtTime(move.time, true),
                 Duration: ubiArtTime(move.duration, true),
@@ -477,7 +477,7 @@ function init() {
             let PictogramClip = {
                 __class: "PictogramClip",
                 Id: randomId(),
-                TrackId: 0,
+                TrackId: randomId(),
                 IsActive: 1,
                 StartTime: ubiArtTime(picto.time, true),
                 Duration: ubiArtTime(picto.duration, true),
