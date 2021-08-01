@@ -391,7 +391,7 @@ function init() {
                         __class: "MusicTrackData",
                         structure: {
                             __class: "MusicTrackStructure",
-                            markers: multiplyBeats = Beats.map(beat => { return beat * 48 }),
+                            markers: (multiplyBeats = Beats.map(beat => { return beat * 48 })).sort(function (a, b) {return a-b}),
                             signatures: [{
                                 __class: "MusicSignature",
                                 marker: 0,

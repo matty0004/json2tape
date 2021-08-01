@@ -118,14 +118,26 @@ function getRealDefaultColors(DefaultColors = {}, lyricsColor = "ffffff") {
         }
         return
     }
-    return {
-        "songcolor_1a": DefaultColors["songColor_1A"] ? hexToUbi(DefaultColors["songColor_1A"]) : [1, 0.266667, 0.266667, 0.266667], // Main 1A color, usually lighter.
-        "songcolor_1b": DefaultColors["songColor_1b"] ? hexToUbi(DefaultColors["songColor_1B"]) : [1, 0.066667, 0.066667, 0.066667], // Main 2B color, usually darker.
-        "songcolor_2a": DefaultColors["songColor_2a"] ? hexToUbi(DefaultColors["songColor_2A"]) : [1, 0.666667, 0.666667, 0.666667], // Banner 1A color, usually lighter.
-        "songcolor_2b": DefaultColors["songColor_2b"] ? hexToUbi(DefaultColors["songColor_2B"]) : [1, 0.466667, 0.466667, 0.466667], // Banner 2B color, usually darker.
-        "lyrics": lyricsColor ? hexToUbi(lyricsColor) : [1,1,1,1], // Lyrics color
-        "theme": [1, 1, 1, 1] // #FFFFFF as default.
-    }
+	try {
+		return {
+			"songcolor_1a": DefaultColors["songColor_1A"] ? hexToUbi(DefaultColors["songColor_1A"]) : [1, 0.266667, 0.266667, 0.266667], // Main 1A color, usually lighter.
+			"songcolor_1b": DefaultColors["songColor_1b"] ? hexToUbi(DefaultColors["songColor_1B"]) : [1, 0.066667, 0.066667, 0.066667], // Main 2B color, usually darker.
+			"songcolor_2a": DefaultColors["songColor_2a"] ? hexToUbi(DefaultColors["songColor_2A"]) : [1, 0.666667, 0.666667, 0.666667], // Banner 1A color, usually lighter.
+			"songcolor_2b": DefaultColors["songColor_2b"] ? hexToUbi(DefaultColors["songColor_2B"]) : [1, 0.466667, 0.466667, 0.466667], // Banner 2B color, usually darker.
+			"lyrics": lyricsColor ? hexToUbi(lyricsColor) : [1,1,1,1], // Lyrics color
+			"theme": [1, 1, 1, 1] // #FFFFFF as default.
+		}
+	}
+	catch(error) {
+		return {
+			"songcolor_1a": [1, 0.266667, 0.266667, 0.266667], // Main 1A color, usually lighter.
+			"songcolor_1b":[1, 0.066667, 0.066667, 0.066667], // Main 2B color, usually darker.
+			"songcolor_2a": [1, 0.666667, 0.666667, 0.666667], // Banner 1A color, usually lighter.
+			"songcolor_2b": [1, 0.466667, 0.466667, 0.466667], // Banner 2B color, usually darker.
+			"lyrics": [1, 1, 1, 1], // Lyrics color
+			"theme": [1, 1, 1, 1] // #FFFFFF as default.
+		}
+	}
 }
 
 /**
