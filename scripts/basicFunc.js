@@ -143,12 +143,47 @@ function debugLog(msg, color = "green") {
  * @param {Object} AudioPreview
  * @returns {Object}
  */
-function getPreviewData(AudioPreview = {}) {
+function getPreviewData(AudioPreview = {
+        coverflow: {
+            startbeat: 0,
+			endbeat: 30
+        },
+        prelobby: {
+            startbeat: 0,
+			endbeat: 30
+        }
+    }) {
     let finalData = {
-        previewEntry: (AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0)) || 0,
-        previewLoopStart: (AudioPreview["coverflow"]["startbeat"] ? AudioPreview["coverflow"]["startbeat"] : (AudioPreview["prelobby"]["startbeat"] ? AudioPreview["prelobby"]["startbeat"] : 0)) || 0,
+        previewEntry: 0,
+        previewLoopStart: 10,
+		previewLoopEnd: 30
     }
-    finalData.previewLoopEnd = (AudioPreview["coverflow"]["endbeat"] ? AudioPreview["coverflow"]["endbeat"] : (AudioPreview["prelobby"]["endbeat"] ? AudioPreview["prelobby"]["endbeat"] : finalData.previewEntry + 30)) || 60
+
+	if (AudioPreview.prelobby && AudioPreview.prelobby.startbeat) {
+		finalData.previewEntry = AudioPreview.prelobby.startbeat
+	}
+	
+	if (AudioPreview.coverflow && AudioPreview.coverflow.startbeat) {
+		finalData.previewEntry = AudioPreview.coverflow.startbeat
+	}
+	
+	if (AudioPreview.coverflow && AudioPreview.coverflow.startbeat) {
+		finalData.previewLoopStart = AudioPreview.coverflow.startbeat
+	}
+	
+	if (AudioPreview.prelobby && AudioPreview.prelobby.startbeat) {
+		finalData.previewLoopStart = AudioPreview.prelobby.startbeat
+	}
+	
+	if (AudioPreview.prelobby && AudioPreview.prelobby.endbeat) {
+		finalData.previewLoopEnd = AudioPreview.prelobby.endbeat
+	}
+	
+	if (AudioPreview.coverflow && AudioPreview.coverflow.endbeat) {
+		finalData.previewLoopEnd = AudioPreview.coverflow.endbeat
+	}
+	
+	
     return finalData
 }
 
