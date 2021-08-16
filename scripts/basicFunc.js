@@ -7,6 +7,20 @@ const hexRgb = require('hex-rgb'),
       chalk = require("chalk")
 
 /**
+ * ClosestNumInArr finds closest number in given array.
+ * @param {Array} Arr Array to check on
+ * @param {Number} Goal The closest number to find
+ * @returns 
+ */
+function ClosestNumInArr(Arr, Goal) {
+    let result = Arr.reduce(function(prev, curr) {
+        return (Math.abs(curr - Goal) < Math.abs(prev - Goal) ? curr : prev);
+    });
+    return result;
+}
+
+
+/**
  * parseJsonp is a JSON parser for Bluestar format JSONs.
  * This was taken from Just Dance Now source code.
  * https://jdnowweb-s.cdn.ubi.com/prod/main/20210719_1009/web/js/utils.js - Line 179
@@ -15,15 +29,19 @@ const hexRgb = require('hex-rgb'),
  */
 function parseJsonp(jsonpString) {
 
-    const JSONP_PREFIX = /^[^(]*?\(/,
-          JSONP_SUFFIX = /\)[^)]*?$/;
-
-    if (JSONP_PREFIX.test(jsonpString) && JSONP_SUFFIX.test(jsonpString)) {
-        var prefix = jsonpString.match(JSONP_PREFIX)[0];
-        var suffix = jsonpString.match(JSONP_SUFFIX)[0];
-        return JSON.parse(jsonpString.substring(prefix.length, jsonpString.length - suffix.length));
+    try {
+        return JSON.parse(jsonpString)
     }
-    else return JSON.parse(jsonpString)
+    catch(e) {
+        const JSONP_PREFIX = /^[^(]*?\(/,
+            JSONP_SUFFIX = /\)[^)]*?$/;
+
+        if (JSONP_PREFIX.test(jsonpString) && JSONP_SUFFIX.test(jsonpString)) {
+            var prefix = jsonpString.match(JSONP_PREFIX)[0];
+            var suffix = jsonpString.match(JSONP_SUFFIX)[0];
+            return JSON.parse(jsonpString.substring(prefix.length, jsonpString.length - suffix.length));
+        }
+    }
 };
 
 /**
@@ -155,45 +173,31 @@ function debugLog(msg, color = "green") {
  * @param {Object} AudioPreview
  * @returns {Object}
  */
-function getPreviewData(AudioPreview = {
-        coverflow: {
-            startbeat: 0,
-			endbeat: 30
-        },
-        prelobby: {
-            startbeat: 0,
-			endbeat: 30
-        }
-    }) {
+function getPreviewData(AudioPreview = {}, Beats = []) {
+        
     let finalData = {
         previewEntry: 0,
         previewLoopStart: 10,
 		previewLoopEnd: 30
     }
 
-	if (AudioPreview.prelobby && AudioPreview.prelobby.startbeat) {
-		finalData.previewEntry = AudioPreview.prelobby.startbeat
-	}
-	
-	if (AudioPreview.coverflow && AudioPreview.coverflow.startbeat) {
-		finalData.previewEntry = AudioPreview.coverflow.startbeat
-	}
-	
-	if (AudioPreview.coverflow && AudioPreview.coverflow.startbeat) {
-		finalData.previewLoopStart = AudioPreview.coverflow.startbeat
-	}
-	
-	if (AudioPreview.prelobby && AudioPreview.prelobby.startbeat) {
-		finalData.previewLoopStart = AudioPreview.prelobby.startbeat
-	}
-	
-	if (AudioPreview.prelobby && AudioPreview.prelobby.endbeat) {
-		finalData.previewLoopEnd = AudioPreview.prelobby.endbeat
-	}
-	
-	if (AudioPreview.coverflow && AudioPreview.coverflow.endbeat) {
-		finalData.previewLoopEnd = AudioPreview.coverflow.endbeat
-	}
+    // If loopStart exists it means we have a JDVS AudioPreview object.
+    if (AudioPreview.loopStart) {
+        try {
+            finalData.previewEntry = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopStart * 1000))
+            finalData.previewLoopStart = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopStart * 1000))
+            finalData.previewLoopEnd = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopEnd * 1000))
+        }
+        catch(e) {}
+    }
+    else {
+        try {
+            finalData.previewEntry = AudioPreview.coverflow.startbeat
+            finalData.previewLoopStart = AudioPreview.prelobby.startbeat || AudioPreview.coverflow.startbeat
+            finalData.previewLoopEnd = AudioPreview.coverflow.startbeat + 30 || AudioPreview.prelobby.startbeat + 30
+        }
+        catch(e) {}
+    }
 	
 	
     return finalData
@@ -207,5 +211,6 @@ module.exports = {
     getRealDifficulty,
     getRealDefaultColors,
     debugLog,
-    getPreviewData
+    getPreviewData,
+    ClosestNumInArr
 }
