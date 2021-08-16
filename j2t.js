@@ -149,7 +149,7 @@ inquirer.prompt(cliInput).then(responses => {
         
         // If local was selected, we call init() directly.
         case "local":
-            init()
+            init("local")
             break;
     }
 
@@ -158,7 +158,7 @@ inquirer.prompt(cliInput).then(responses => {
 
 // -- Init
 // Main function where everything happens.
-function init() {
+function init(Mode = "jdnow") {
 
     // -- Files
     // Required files to read
@@ -204,6 +204,8 @@ function init() {
                 for (let i = 0; i < 5; i++) Beats.splice(i, 0, nextBeats[i] - firstBeat);
             }
             for (var i = 0; i < Beats.length; i++) BeatsMap24.push(i * 24)
+
+            let World_Folder = `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}`
             
 
     // --
@@ -281,12 +283,12 @@ function init() {
 
     // --
     
-    // We delete the MapNames folder from output folder if it already exists.
+    // If output/MapName folder exists, we delete it.
     if (fs.existsSync(
         `${getSetting("default_outputFolder")}/${MapName}/`
     )) fs.rmdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, { recursive: true });
 
-    // We create the MapNames folder in the output folder for the new files.
+    // Now that output/MapName was deleted, we create it.
     if (!fs.existsSync(
         `${getSetting("default_outputFolder")}/${MapName}/`
     )) fs.mkdirSync(`${getSetting("default_outputFolder")}/${MapName}/`, { recursive: true })
@@ -407,7 +409,7 @@ function init() {
                             previewLoopEnd: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewLoopEnd,
                             volume: 1
                         },
-                        path: `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}/audio/${MapName.toLowerCase()}.${getSetting("musictrack_audioFormat")}`,
+                        path: `${World_Folder}/audio/${MapName.toLowerCase()}.${getSetting("musictrack_audioFormat")}`,
                         url: `jmcs://jd-contents/${MapName}/${MapName}.ogg`
                     }
                 }
@@ -442,7 +444,7 @@ function init() {
                 IsActive: 1,
                 StartTime: ubiArtTime(move.time, true),
                 Duration: ubiArtTime(move.duration, true),
-                ClassifierPath: `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}/timeline/moves/${move.name}.msm`,
+                ClassifierPath: `${World_Folder}/timeline/moves/${move.name}.msm`,
                 GoldMove: move.goldMove ? 1 : 0,
                 CoachId: move.moveId,
                 MoveType: 0,
@@ -481,9 +483,9 @@ function init() {
                 IsActive: 1,
                 StartTime: ubiArtTime(picto.time, true),
                 Duration: ubiArtTime(picto.duration, true),
-                PictoPath: `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}/timeline/pictos/${picto.name}.${getSetting("dtape_pictoFormat")}`,
+                PictoPath: `${World_Folder}/timeline/pictos/${picto.name}.${getSetting("dtape_pictoFormat")}`,
                 MontagePath: getSetting("dtape_useMontagePath") 
-                            ? `world/${getSetting("dtape_mapsFolderType")}/${MapName.toLowerCase()}/timeline/pictos/montage.png` 
+                            ? `${World_Folder}/timeline/pictos/montage.png` 
                             : "",
                 AtlIndex: 4294967295,
                 CoachCount: 4294967295
@@ -562,7 +564,7 @@ function init() {
     function msmsUtility() {
 
         // We check if downloading MSMs is enabled.
-        if (getSetting("default_downloadMsms") && getSetting("default_downloadMsms") === true) {
+        if (getSetting("default_downloadMsms") && getSetting("default_downloadMsms") === true && Mode === "jdnow") {
 
 
             // Create the classifiers folder.
@@ -594,12 +596,13 @@ function init() {
 
 
         }
+        else return;
     }
 
     function pictosUtility() {
 
         // We check if splitting pictos is enabled and the map has a picto-sprite first and then continue.
-        if (getSetting("default_splitPictos") && getSetting("default_splitPictos") === true) {
+        if (getSetting("default_splitPictos") && getSetting("default_splitPictos") === true && Mode === "jdnow") {
             axios({
                 method: "HEAD",
                 url: `https://jdnowweb-s.cdn.ubi.com/uat/release_tu2/20150928_1740/songs/${MapName}/assets/web/pictos-sprite.png`
@@ -627,10 +630,7 @@ function init() {
                     fs.mkdirSync(dest, { recursive:true }) // We create our destination if it does not exist.
                     fse.moveSync(source, dest, {overwrite:true}) // We move the picto_output folder to our output folder.
 
-                    // We delete our output and input folders.
-                    fs.rmdirSync(`./scripts/pictocutter/picto_input/`, {
-                        recursive: true
-                    }) 
+                    // We delete the output folders.
                     fs.rmdirSync(`./scripts/pictocutter/picto_output/`, {
                         recursive: true
                     }) 
@@ -658,6 +658,7 @@ function init() {
             })
             .catch(error => {})
         }
+        else return;
     }
     Promise.all([
         songdescUtility(), 
@@ -669,8 +670,10 @@ function init() {
     ])
     .then(() => {
         console.log("")
-        BasicFunc.debugLog(
-            `[DONE!] The files were successfully converted. Wait for pictos to cut if they are enabled. Please credit yunyl in your work!`
+        getSetting("default_splitPictos") && Mode === "jdnow" ? BasicFunc.debugLog(
+            `[DONE!] ${MapName} was successfully converted to TAPE. Pictos cutting is enabled, please wait until they are cut. Please credit yunyl in your work.`
+        ) : BasicFunc.debugLog(
+            `[DONE!] ${MapName} was successfully converted to TAPE. Please credit yunyl in your work.`
         )
     })
 }
