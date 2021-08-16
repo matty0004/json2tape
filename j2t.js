@@ -611,7 +611,7 @@ function init(Mode = "jdnow") {
 
                 // Since NJS is a shit way to deal with images, we use Python and PIL library.
                 // We call pictocutter.py made by pashtet with the MapName as an argument.
-                const pictocutter = spawn('python', ["./scripts/pictocutter/pictocutter.py", MapName]);
+                const pictocutter = spawn('python', ["./scripts/pictocutter/pictocutter.py", MapName, CoachCount]);
 
                 // If everything was successfull, do stuff.
                 pictocutter.stdout.on("data", function(data) {
