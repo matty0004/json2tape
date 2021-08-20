@@ -185,7 +185,7 @@ function getPreviewData(AudioPreview, Beats = []) {
     if ("loopStart" in AudioPreview) {
         try {
             finalData.previewEntry = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.entry * 1000))
-            finalData.previewLoopStart = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopStart * 1000))
+            finalData.previewLoopStart = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.entry * 1000))
             finalData.previewLoopEnd = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopEnd * 1000))
         }
         catch(e) {}
