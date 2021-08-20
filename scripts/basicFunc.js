@@ -173,7 +173,7 @@ function debugLog(msg, color = "green") {
  * @param {Object} AudioPreview
  * @returns {Object}
  */
-function getPreviewData(AudioPreview = {}, Beats = []) {
+function getPreviewData(AudioPreview, Beats = []) {
         
     let finalData = {
         previewEntry: 0,
@@ -182,9 +182,9 @@ function getPreviewData(AudioPreview = {}, Beats = []) {
     }
 
     // If loopStart exists it means we have a JDVS AudioPreview object.
-    if (AudioPreview.loopStart) {
+    if ("loopStart" in AudioPreview) {
         try {
-            finalData.previewEntry = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopStart * 1000))
+            finalData.previewEntry = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.entry * 1000))
             finalData.previewLoopStart = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopStart * 1000))
             finalData.previewLoopEnd = Beats.indexOf(ClosestNumInArr(Beats, AudioPreview.loopEnd * 1000))
         }

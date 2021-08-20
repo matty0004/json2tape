@@ -379,6 +379,9 @@ function init(Mode = "jdnow") {
     // -- MUSICTRACK
     // Create musictrack for configuring when the song should end and what it's beats (bpm) should be.
     function musicTrackUtility() {
+		
+		let PreviewData = BasicFunc.getPreviewData(mainJson["AudioPreview"], Beats)
+
         let MusicTrackComponent_Template = {
             __class: "Actor_Template",
             WIP: 0,
@@ -404,9 +407,9 @@ function init(Mode = "jdnow") {
                             videoStartTime: 0,
 							// We use getPreviewData function and give it the AudioPreview obj 
 							// and beats and it returns us an object with the preview data we need.
-                            previewEntry: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewEntry,
-                            previewLoopStart: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewLoopStart,
-                            previewLoopEnd: BasicFunc.getPreviewData(mainJson["AudioPreview"], mainJson["beats"]).previewLoopEnd,
+                            previewEntry: PreviewData.previewEntry,
+                            previewLoopStart: PreviewData.previewLoopStart,
+                            previewLoopEnd: PreviewData.previewLoopEnd,
                             volume: 1
                         },
                         path: `${World_Folder}/audio/${MapName.toLowerCase()}.${getSetting("musictrack_audioFormat")}`,
